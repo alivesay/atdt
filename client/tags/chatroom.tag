@@ -4,20 +4,32 @@
 <chatroom>
     <div class="container-fluid fill">
         <div class="panel panel-default fill">
-            <div class="panel-heading lead">
+            <div class="panel-heading lead cyan">
                 { opts.title }
             </div>
             <div id="chatroom-panel-body" class="panel-body lead">
-                <div id="chatdiv" class="fill">
-                    <ul class="fill">
-                        <li each={ messages }>
-                            { (source === 'chatroom' ? '' : source + ': ') + text }
-                        </li>
-                    </ul>
+                <div class="row-fluid fill">
+                    <div id="userlist" class="span2 hidden-phone fill">
+                        <ul class="nav nav-list">
+                            <li class = "nav-header">Users</li>
+                            <li each={ user, i in users }><a>{ user }</a></li>
+                        </ul>
+                    </div>
+                    <div class="span10 fill">
+                        <div id="chatdiv" class="fill">
+                            <ul class="fill">
+                                <li each={ messages } class={ red: source === 'chatroom' }>
+                                    { (source === 'chatroom' ? '' : source + ': ') + text }
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="panel-footer">
-                <input type="text" id="messageinput" name="messageinput" value="" class="form-control" onkeydown={ messagekeyup } placeholder="Enter text here to chat.">
+                <div class="lead">
+                    <input type="text" id="messageinput" name="messageinput" value="" class="form-control" onkeydown={ messagekeyup } placeholder="Enter text here to chat." autofocus>
+                </div>
             </div>
         </div>
     </div>
@@ -45,6 +57,12 @@
         socket.on('chatroom:init', function (data) {
             self.name = data.name;
             self.users = data.users;
+
+            for(var i=0; i < data.recentMessages.length; i++) {
+                self.messages.push(data.recentMessages[i]);
+            }
+            
+            self.update();
         });
 
         socket.on('chatroom:send:name', function (data) {
@@ -82,19 +100,24 @@
         });
 
         messagekeyup(e) {
-            if (e.which === 13) {
+
+            var message = self.messageinput.value.trim();
+            
+            if (e.which === 13 && message.length > 0) {
                 socket.emit('chatroom:send:message', {
                         source: self.name,
-                        message: self.messageinput.value
+                        message: message
                     });
         
                     self.messages.push({
                         source: self.name,
-                        text: self.messageinput.value,
+                        text: message,
                         timestamp: Date.now()
                     });
 
                     self.messageinput.value = '';
+                    
+                    self.update();
                 }
                 
             return true;
@@ -107,7 +130,7 @@
         }
         
         #chatroom-panel-body {
-            height: calc(100% - 184);
+            height: calc(100% - 184px);
             height: -o-calc(100% - 184px);
             height: -webkit-calc(100% - 184px);
             height: -moz-calc(100% - 184px);
@@ -115,8 +138,19 @@
         
         #chatdiv {
             overflow-y: hidden;
+            padding-top: 20px;
         }
         
+
+        #userlist ul.nav-list {
+            height: calc(100% - 50px);
+            margin-left: 0px !important;
+        }
+        
+        .panel-heading {
+            background-color: black !important;
+        }
+
         ::-webkit-input-placeholder {
             color: yellow !important;
         }
@@ -131,6 +165,14 @@
         
         :-ms-input-placeholder {  
             color: yellow !important;
+        }
+        
+        .cyan {
+            color: cyan !important;
+        }
+        
+        .red {
+            color: red !important;
         }
     </style>
 
