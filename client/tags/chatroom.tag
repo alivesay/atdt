@@ -16,7 +16,7 @@
                         </ul>
                     </div>
                     <div class="span10 fill">
-                        <div id="chatdiv" class="fill">
+                        <div id="chatdiv">
                             <ul class="fill">
                                 <li each={ messages } class={ red: source === 'chatroom' }>
                                     { (source === 'chatroom' ? '' : source + ': ') + text }
@@ -33,6 +33,7 @@
             </div>
         </div>
     </div>
+    
     <script>
         var self = this;
         
@@ -127,18 +128,23 @@
     <style>
         #messageinput {
             width: 100% !important;
+            border: 0px !important;
         }
         
         #chatroom-panel-body {
-            height: calc(100% - 184px);
-            height: -o-calc(100% - 184px);
-            height: -webkit-calc(100% - 184px);
-            height: -moz-calc(100% - 184px);
+            height: calc(100% - 204px);
+            height: -o-calc(100% - 204px);
+            height: -webkit-calc(100% - 204px);
+            height: -moz-calc(100% - 204px);
         }
         
         #chatdiv {
             overflow-y: hidden;
             padding-top: 20px;
+            height: calc(100% - 20px);
+            height: -o-calc(100% - 20px);
+            height: -webkit-calc(100% - 20px);
+            height: -moz-calc(100% - 20px);
         }
         
 
