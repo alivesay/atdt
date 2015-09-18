@@ -8,11 +8,13 @@
                 { opts.title }
             </div>
             <div id="chatroom-panel-body" class="panel-body lead">
-                <ul>
-                    <li each={ messages }>
-                        { (source === 'chatroom' ? '' : source + ': ') + text }
-                    </li>
-                </ul>
+                <div id="chatdiv" class="fill">
+                    <ul class="fill">
+                        <li each={ messages }>
+                            { (source === 'chatroom' ? '' : source + ': ') + text }
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div class="panel-footer">
                 <input type="text" id="messageinput" name="messageinput" value="" class="form-control" onkeydown={ messagekeyup } placeholder="Enter text here to chat.">
@@ -25,6 +27,16 @@
         self.messages = [];
         
         var socket = io.connect();
+        
+        this.on('update', function () {
+            var chatdiv = $('#chatdiv');
+            chatdiv.stop().animate({
+                    scrollTop: chatdiv.prop('scrollHeight')
+                },
+                parseInt(300, 10)
+            );
+        
+        });
 
         socket.on('connect', function () {
             console.log('socket.io connected.');
@@ -81,7 +93,7 @@
                         text: self.messageinput.value,
                         timestamp: Date.now()
                     });
-        console.log(self.messages);
+
                     self.messageinput.value = '';
                 }
                 
@@ -99,6 +111,10 @@
             height: -o-calc(100% - 184px);
             height: -webkit-calc(100% - 184px);
             height: -moz-calc(100% - 184px);
+        }
+        
+        #chatdiv {
+            overflow-y: hidden;
         }
         
         ::-webkit-input-placeholder {
